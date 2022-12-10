@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
-
+#if os(iOS) || os(watchOS) || os(tvOS)
+import UIKit
+#endif
 
 struct ContentView: View {
     
-    struct FontElement: Hashable {
+    private struct FontElement: Hashable {
         let title: String
         let font: Font
         
@@ -34,6 +36,22 @@ struct ContentView: View {
         FontElement(.caption2, "caption2")
     ]
     
+    private let foregroundColor: Color = {
+        #if os(iOS) || os(watchOS) || os(tvOS)
+        return Color(UIColor.systemBackground)
+        #else
+        return Color(NSColor.windowBackgroundColor)
+        #endif
+    }()
+    
+    private let backgroundColor: Color = {
+        #if os(iOS) || os(watchOS) || os(tvOS)
+        return Color(UIColor.label)
+        #else
+        return Color(NSColor.textColor)
+        #endif
+    }()
+    
     var body: some View {
         ScrollView(.vertical) {
             ForEach(fonts, id: \.self) { elem in
@@ -45,8 +63,8 @@ struct ContentView: View {
                             .font(.caption2)
                             .padding(.horizontal, 2.0)
                     }
-                    .foregroundColor(Color(NSColor.windowBackgroundColor))
-                    .background(Color(NSColor.textColor))
+                    .foregroundColor(foregroundColor)
+                    .background(backgroundColor)
                     .cornerRadius(2.0)
                 }
                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
